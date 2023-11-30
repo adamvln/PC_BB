@@ -19,7 +19,7 @@ def extract_numbers_from_string(s):
     tuple of int: A tuple containing the two extracted numbers multiplied by 50.
                    Returns None if the pattern does not match.
     """
-    
+
     match = re.search(r'final_(\d+)_(\d+).laz', s)
     if match:
         # Extracting the two numbers
@@ -127,7 +127,7 @@ def main(directory, output_base_filename):
         if filename.endswith(".laz"):
             input_laz_file = os.path.join(directory, filename)
             base_x, base_y = extract_numbers_from_string(filename)
-            filtered_data = filter_pole_coordinates('coordinates_poles.xlsx', base_x, base_y)
+            filtered_data = filter_pole_coordinates('dataset/sheets/fused_coordinates_poles.xlsx', base_x, base_y)
 
             # Process each file
             create_bounding_box_laz(input_laz_file, output_base_filename, filtered_data)
