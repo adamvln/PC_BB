@@ -19,6 +19,7 @@ def extract_numbers_from_string(s):
     tuple of int: A tuple containing the two extracted numbers multiplied by 50.
                    Returns None if the pattern does not match.
     """
+    
     match = re.search(r'final_(\d+)_(\d+).laz', s)
     if match:
         # Extracting the two numbers
@@ -41,6 +42,7 @@ def filter_pole_coordinates(filename, base_x, base_y):
     pandas.DataFrame: Filtered DataFrame with only the rows where 'Grond X', 'Top X', 'Grond Y', and 'Top Y' 
                       fall within the specified range of base_x/base_y to base_x/base_y + 50.
     """
+
     # Read the Excel file
     df = pd.read_excel(filename)
 
@@ -59,6 +61,22 @@ def filter_pole_coordinates(filename, base_x, base_y):
     return filtered_df[['Grond X', 'Top X', 'Grond Y', 'Top Y', 'Grond Z', 'Top Z']]
 
 def create_bounding_box_laz(input_laz_file, base_filename, poles_df, box_size=1):
+    """
+    Processes a given LAZ file, creating individual bounding boxes around each point defined in the provided DataFrame. 
+    It then extracts points within each bounding box and writes them to new LAZ files.
+
+    The function iterates over each row in the DataFrame, defines a bounding box around the point coordinates (expanded by a specified box size), 
+    filters the points from the original LAZ file within this bounding box, and writes these points to a new LAZ file.
+
+    Parameters:
+    input_laz_file (str): Path to the input LAZ file containing the original point cloud data.
+    base_filename (str): Base path and filename for the output LAZ files. Each file will be appended with an index number.
+    poles_df (pandas.DataFrame): DataFrame containing the coordinates ('Grond X', 'Top X', 'Grond Y', 'Top Y', 'Grond Z', 'Top Z') for each point.
+    box_size (float, optional): Size of the bounding box to be created around each point. Defaults to 1.
+
+    Each output file is named using the base_filename followed by an underscore and the index of the row from the DataFrame.
+    """
+
     # Read the original LAZ file
     with laspy.open(input_laz_file) as file:
         las = file.read()
@@ -93,13 +111,17 @@ def create_bounding_box_laz(input_laz_file, base_filename, poles_df, box_size=1)
 
             new_las.write(output_laz_file)
 
-if __name__ == "__main__":
-    # Open a .laz file
-    directory = 'dataset/full_pc'
-    output_base_filename = 'dataset/bb_pc/bb'
- 
+def main(directory, output_base_filename):
+    """
+    Processes all .laz files in the specified directory, creating bounding boxes around points defined in an external Excel file.
 
-    # Call the function with the path to your original and new LAZ files
+    For each .laz file in the directory, this function extracts the base X and Y coordinates from the filename, filters relevant
+    points from a provided Excel file, and then creates a new .laz file in the output directory with points within the bounding box.
+
+    Parameters:
+    directory (str): Directory containing the original .laz files to process.
+    output_base_filename (str): Base path and filename for the output .laz files.
+    """
 
     for filename in os.listdir(directory):
         if filename.endswith(".laz"):
@@ -109,5 +131,10 @@ if __name__ == "__main__":
 
             # Process each file
             create_bounding_box_laz(input_laz_file, output_base_filename, filtered_data)
+
+if __name__ == "__main__":
+    directory = 'dataset/full_pc'
+    output_base_filename = 'dataset/bb_pc/bb'
+    main(directory, output_base_filename)
     
 
