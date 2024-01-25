@@ -30,11 +30,16 @@ Welcome to the PC_BB repository! This project is part of an internship with the 
      ```bash
      "C:\path\to\blender\python.exe" -m ensurepip
      "C:\path\to\blender\python.exe" -m pip install pandas
+     "C:\path\to\blender\python.exe" -m pip install openpyxl
      ```
 
 ### Running the Processing Script
 5. **Execute Processing Script**:
    - Now you can run the `blender_functions/processing_blender.py` script.
+   - Open a command prompt and run : 
+     ```bash
+     blender --background --python blender_functions/processing_blender.py
+     ```
    - Ensure all dependencies and paths are correctly set for a smooth execution.
 
 ## Acknowledgements
